@@ -168,35 +168,47 @@ loaded via a namespace (and not attached):
 .
 ├── MS_server.R
 ├── MS_ui.R
+├── MSdb_server.R
+├── MSdb_ui.R
+├── MStest_server.R
+├── MStest_ui.R
 ├── README.md
 ├── TODO_notes.txt
+├── allComments.csv
 ├── allFeatures.csv
 ├── app.R
 ├── backup_db
-│   ├── 2017-11-28\ 15.06.42
-│   │   └── allFeatures.csv
 │   └── initial
 │       └── allFeatures.csv
-├── colnames
-│   ├── allPeptides.csv
-│   ├── evidence.csv
-│   ├── msScans.csv
-│   └── summary.csv
-├── combine1st2ndAllFileFeatures.mean.csv
-├── combineBatch1n2n3.csv
+├── documents
+│   ├── allComments_screenshots.png
+│   ├── database_screenshots.png
+│   ├── main_screenshots.png
+│   ├── thresholds_screenshots.png
+│   └── tree.txt
 ├── functions
 │   ├── MS_db_update.R
+│   ├── helperFunctions.R
 │   └── summariseFile.R
-├── instrumentNames.txt
-├── plot1.png
-├── plot2.png
 ├── thresholds.txt
+├── tmp
+│   ├── wiki.md
+│   ├── wiki_input.md
+│   ├── wiki_installation.md
+│   ├── wiki_ouptuts.md
+│   └── wiki_tutorial.md
 └── www
+    ├── css
+    │   └── style.css
+    ├── data
+    │   ├── 20171031_QEHF_demo1.csv
+    │   ├── 20171103_QEHF_demo2.csv
+    │   ├── 20171109_QEplus_demo3.csv
+    │   ├── 20171123_QEplus_demo4.csv
+    │   └── mouse_brain.csv
     └── js
         ├── proteomicsPlot.js
-        ├── proteomicsPlotTMP.js
         └── tooltip.js
 
-7 directories, 23 files
-
+9 directories, 34 files
 ```
