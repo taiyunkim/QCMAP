@@ -1,0 +1,4 @@
+Instrument	Threshold
+QECl	25000
+QEplus	26000
+QEHF	37000

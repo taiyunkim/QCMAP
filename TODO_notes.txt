@@ -1,0 +1,36 @@
+# Proteomics 
+
+
+
+- ridge regression
+	-> high leverage (influence) point (remove the high leverage point in ridge regression)
+	-> do multiple regression to get high leverage point
+	-> ?lambda (cross validation)
+
+
+
+- zip file extraction does not seem to work on windows platform
+	-> to allow windows distribution, may be provide an alternative location to save the unzipped file for "exdir" parameter in "unzip" function. (Or remove "exdir" to unzip to the root of the directory)
+
+
+
+- COMPARISON TAB
+	-> color consistancy of the input bar and legends
+
+	-> highlight the selected bar of barplots
+
+	-> do not overlap the bar plots (inputs were overlapped from testing unsure of DB)
+
+	-> input bars do not appear here
+
+
+- TEST saving to database
+
+
+- host address??? combine with protein array?
+
+
+
+[DONE] provide zip, tar.gz file option from input
+
+
