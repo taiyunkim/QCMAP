@@ -23,6 +23,10 @@ msServer <- function(input,output,session) {
     instrumentNames <- read.csv("allFeatures.csv", colClasses = c(rep("NULL", 14), "character"), check.names = F)[,1]
     instrumentNames <- unique(instrumentNames)
     
+    featureNames <- colnames(read.csv("allFeatures.csv", nrows = 1, check.names = F))[-1]
+    featureNames = featureNames[-which(featureNames %in% c("Peptide Sequences Identified", "Date", "Instrument", "Type"))]
+    
+    
     # declare fileIn to store input files as reactive values.
     fileIn <- reactiveValues()
     
@@ -492,7 +496,7 @@ msServer <- function(input,output,session) {
         this.instrument <- instrumentNames[i]
         allFeatures <- readData()
         
-       batch.1 <- allFeatures
+        batch.1 <- allFeatures
         batch.1 <- batch.1[order(batch.1$Date),]
         
         batch.1 <- batch.1[batch.1$Instrument == this.instrument,]
@@ -735,6 +739,115 @@ msServer <- function(input,output,session) {
       })
     })
     
+    
+    lapply(1:length(instrumentNames), function(i) {
+      this.instrument <- instrumentNames[i]
+      allFeatures <- readData()
+      curData = allFeatures[which(allFeatures$Instrument == this.instrument),]
+      curData = curData %>%
+        select(-c("Date", "Instrument", "Type" ))
+      output[[paste("cor_", this.instrument, sep = "")]] = renderPlot({
+        corrplot::corrplot(cor(curData))
+      })
+    })
+    
+    
+    # loop feature bar plot
+    ## For each instrument
+    lapply(1:length(instrumentNames), function(i) {
+      this.instrument <- instrumentNames[i]
+      allFeatures <- readData()
+      
+      lapply(1:length(featureNames), function(j) {
+        output[[paste0("bar_", instrumentNames[i], "_", featureNames[j],"_history", sep = "")]] <- renderPlotly({
+          
+          batch.1 <- allFeatures
+          batch.1 <- batch.1[order(batch.1$Date),]
+          
+          batch.1 <- batch.1[batch.1$Instrument == this.instrument,]
+          dat <- data.frame(
+            date = c(as.POSIXct(batch.1$Date)),
+            feat = c(batch.1[[featureNames[j]]]),
+            batch = c(rep("Database", nrow(batch.1))),
+            name = c(rownames(batch.1)),
+            instrument = c(as.character(batch.1$Instrument)),
+            type = c(as.character(batch.1$Type))
+          )
+        
+          goodColors <- c("#8B4513", "#98FFCC", "#0000FF", "#808080", "#FF00FF", "#f88379", "#9400D3")
+          p <- plot_ly(dat, x = ~date, y = ~feat, text = ~name, name = "database", key = ~instrument, showlegend = T, color = ~instrument, colors = "#808080", type = "bar") %>%
+            layout(
+              barmode = 'group',
+              title = paste0("[", this.instrument, "] ", featureNames[j], sep = ""),
+              showlegend = T,
+              xaxis = list(
+                title = "Date",
+                rangeselector = list(
+                  buttons = list(
+                    list(
+                      count = 7,
+                      label = "1W",
+                      step = "day",
+                      stepmode = "backward"),
+                    list(
+                      count = 14,
+                      label = "2W",
+                      step = "day",
+                      stepmode = "backward"),
+                    list(
+                      count = 1,
+                      label = "1M",
+                      step = "month",
+                      stepmode = "backward"),
+                    list(
+                      count = 3,
+                      label = "3M",
+                      step = "month",
+                      stepmode = "backward"),
+                    list(
+                      count = 6,
+                      label = "6M",
+                      step = "month",
+                      stepmode = "backward"),
+                    list(
+                      count = 1,
+                      label = "1Y",
+                      step = "year",
+                      stepmode = "backward"),
+                    list(
+                      count = 1,
+                      label = "YTD",
+                      step = "year",
+                      stepmode = "todate"),
+                    list(step = "all")
+                  )
+                ),
+                rangeslider = list(type = "date")
+              ),
+              
+              
+              yaxis = list(title = featureNames[j])
+            ) %>%
+            rangeslider(start = (as.POSIXct(tail(dat$date,1)) - 1296000), end = as.POSIXct(tail(dat$date,1)))
+        
+          # if (ms_runReader$run == T) {
+          #   dat.batch2 <- ms_runReader$dat.batch2
+          #   if (any(dat.batch2$instrument == this.instrument)) {
+          #     dat.batch2 <- dat.batch2[dat.batch2$instrument == this.instrument,]
+          #     p <- p %>%
+          #       add_bars(data = dat.batch2, x = ~date, y = ~pep, key = ~type, 
+          #                marker = list(color = "#e60000"), text = ~name, 
+          #                name = ~instrument, color = ~name, showlegend = T, inherit = T)
+          #     
+          #     p <- p %>%
+          #       rangeslider(start = (as.POSIXct(tail(dat.batch2$date,1)) - 1296000), end = as.POSIXct(tail(dat.batch2$date,1)))
+          #   }
+          # }
+          p
+        })
+        
+      })
+    })
     
     
     ################################################################################

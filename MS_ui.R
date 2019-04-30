@@ -155,7 +155,10 @@ ms_box_mainPanel <- function() {
   
   instrumentNames <- read.csv("allFeatures.csv", colClasses = c(rep("NULL", 14), "character"), check.names = F)[,1]
   instrumentNames <- unique(instrumentNames)
-
+  
+  featureNames <- colnames(read.csv("allFeatures.csv", nrows = 1, check.names = F))[-1]
+  featureNames = featureNames[-which(featureNames %in% c("Peptide Sequences Identified", "Date", "Instrument", "Type"))]
+  
   list(
     tags$head(tags$script(type = "text/javascript", src = "js/proteomicsPlot.js")),
     tags$head(tags$script(type = "text/javascript", src = "js/tooltip.js")),
@@ -183,7 +186,31 @@ ms_box_mainPanel <- function() {
             hr(),
 
             #textOutput(paste0("score_",instrumentNames[i],"_check",sep="")),
-            plotlyOutput(paste0("box_", instrumentNames[i], sep = ""), height = "500px")
+            
+            do.call(
+              tabsetPanel, c(
+                id = "subT",
+                c(
+                  list(
+                    tabPanel(
+                      title = "boxplot",
+                      plotlyOutput(paste0("box_", instrumentNames[i], sep = ""), height = "500px")
+                    ),
+                    tabPanel(
+                      title = "Correlation",
+                      plotOutput(paste("cor_", instrumentNames[i], sep = ""), height = "500px")
+                    )
+                  ),
+                  lapply(1:length(featureNames), function(j) {
+                    tabPanel(
+                      title = featureNames[j], # 11 features
+                      plotlyOutput(paste("bar_", instrumentNames[i], "_", featureNames[j], "_history", sep = ""), height = "500px")
+                    )
+                  })
+                )
+
+              )
+            )
           )
         }),
 
